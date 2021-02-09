@@ -1,20 +1,23 @@
 const geocode = require('./utils/geocode')
+const forecast = require('./utils/forecast')
 
-// const url = 'http://api.weatherstack.com/current?access_key=1954b1f03c32542fbfdb5fa31238fab5&query=Tashkent'
+const address = process.argv[2]
 
-// request({ url: url, json: true }, (error, response) => {
+if (!address) {
+  console.log('Please provide an address')
+} else {
+  geocode(address, (error, { latitude, longitude, location }) => {
+    if (error) {
+      return console.log(error)
+    }
 
-//   if (error) {
-//     console.log('Unable to connect to weather server!')
-//   } else if (response.body.error) {
-//     console.log('Unable to find location. Try another')
-//   } else {
-//     const data = response.body.current.weather_descriptions[0] + '. It is currently ' + response.body.current.temperature + ' C.'
+    forecast(latitude, longitude, (error, forecastData) => {
+      if (error) {
+        return console.log(error)
+      }
 
-//     console.log(data)
-//   }
-// })
-
-geocode('Tashkent', (error, data) => {
-  console.log(data)
-})
+      console.log(location)
+      console.log(forecastData)
+    })
+  })
+}
